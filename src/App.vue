@@ -3,10 +3,20 @@ import { computed, onMounted, onUnmounted, ref } from 'vue'
 import HomePage from './pages/HomePage.vue'
 import ContactPage from './pages/ContactPage.vue'
 
-const path = ref(window.location.pathname)
+const baseUrl = import.meta.env.BASE_URL
+
+const normalizePath = (pathname: string) => {
+  const withoutBase = pathname.startsWith(baseUrl)
+    ? pathname.slice(baseUrl.length - 1)
+    : pathname
+
+  return withoutBase || '/'
+}
+
+const path = ref(normalizePath(window.location.pathname))
 
 const syncPath = () => {
-  path.value = window.location.pathname
+  path.value = normalizePath(window.location.pathname)
 }
 
 onMounted(() => {
@@ -30,8 +40,8 @@ const CurrentPage = computed(() => {
   <div class="site-shell">
     <header class="site-header">
       <nav class="site-nav">
-        <a href="/">Home</a>
-        <a href="/contact">Contact</a>
+        <a :href="baseUrl">Home</a>
+        <a :href="`${baseUrl}contact`">Contact</a>
       </nav>
     </header>
 
